@@ -54,7 +54,9 @@ int Hashish(string chunk){
 }
 
 
-void segmenter(string fileName){
+vector<int> segmenter(string fileName){
+	vector<int> storage;
+
 	fstream file1;
 	
 	string word1, word2, append, chunk;
@@ -92,17 +94,23 @@ void segmenter(string fileName){
 				chunkHash = Hashish(chunk);
 				cout << chunk << endl;
 				cout << chunkHash << endl;
-
+				storage.push_back(chunkHash);
 			}
 			memeCount++;
 		}
 		cout << memeCount << endl;
 		done = 1;
+		for(int i = 0; i < storage.size(); i++){
+			//cout << storage[i] << endl;
+		}
 	}
+	return storage;
 }
 
 int main()
 {
+	string hash[10000][10];
+	vector<int> temp;
 
     string dir = string("sm_doc_set");
     vector<string> files = vector<string>();
@@ -112,6 +120,11 @@ int main()
     for (unsigned int i = 0;i < files.size();i++) {
         cout << files[i] << endl;
     }
-    segmenter(files[0]);
+    
+    temp = segmenter(files[0]);
+    for(int i = 0; i < temp.size(); i++){
+    	hash[temp[i]][0] = files[0];
+    }
+    cout << hash[2707][0] << endl;
     return 0;
 }
