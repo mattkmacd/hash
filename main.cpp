@@ -5,8 +5,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cctype>
 #include <bits/stdc++.h>
+#include <cctype>
 
 using namespace std;
 
@@ -25,29 +25,6 @@ int getdir (string dir, vector<string> &files)
     }
     closedir(dp);
     return 0;
-}
-
-void segmenter(vector<string> fileNames){
-	fstream file;
-	string word, fileName, append;
-	int fileCount = 0;
-	int done = 0;
-
-	append = "../Hash/sm_doc_set/";
-	fileName = fileNames[1].c_str();
-	append = append + fileName;
-	cout << append << endl;
-	file.open(append);
-	
-	if(file.is_open()) {
-		cout << fileNames[1].c_str() << endl;
-	}
-	else{
-		cout << "broke" << endl;
-	}
-	while(file >> word){
-		cout << word << endl;
-	}
 }
 
 string punctRemover(string word){
@@ -77,8 +54,56 @@ int Hashish(string chunk){
 }
 
 
+void segmenter(string fileName){
+	fstream file1;
+	
+	string word1, word2, append, chunk;
+	int fileCount = 0;
+	int wordCount;
+	int memeCount = 0;
+	int done = 0;
+	int chunkHash;
+	
+	while(done == 0){
+		wordCount = 0;
+		append = "../Hash/sm_doc_set/";
+		append = append + fileName.c_str();
+		
+		file1.open(append);
+
+		while(file1 >> word1 && done == 0){
+			fstream file2;
+			file2.open(append);
+			wordCount = 0;
+			chunk = word1;
+			while(file2 >> word2 && wordCount < memeCount){
+				wordCount++;
+			}
+			wordCount = 0;
+			while(file2 >> word2 && wordCount < 5){
+				chunk = chunk + word2;
+				wordCount++;
+			}
+			if(wordCount != 5){
+				done = 1;
+			}
+			else{
+				chunk = punctRemover(chunk);
+				chunkHash = Hashish(chunk);
+				cout << chunk << endl;
+				cout << chunkHash << endl;
+
+			}
+			memeCount++;
+		}
+		cout << memeCount << endl;
+		done = 1;
+	}
+}
+
 int main()
 {
+
     string dir = string("sm_doc_set");
     vector<string> files = vector<string>();
 
@@ -87,17 +112,6 @@ int main()
     for (unsigned int i = 0;i < files.size();i++) {
         cout << files[i] << endl;
     }
-    segmenter(files);
+    segmenter(files[0]);
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
