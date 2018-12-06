@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cctype>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -49,6 +50,21 @@ void segmenter(vector<string> fileNames){
 	}
 }
 
+string punctRemover(string word){
+
+    for(int i = 0, len = word.size(); i < len; i++){
+        if (ispunct(word[i])) {
+            word.erase(i--, 1);
+            len = word.size();
+        }
+        else if(word[i] <= 'Z' && word[i] >= 'A') {
+            word[i] = word[i] - ('Z' - 'z');
+        }
+    }
+
+    return word;
+
+}
 
 int main()
 {
