@@ -112,7 +112,7 @@ int main()
 	//string hash[10000][10];
 	string **hash = new string*[10000];
 	for(int g = 0; g < 10000; g++){
-		hash[g] = new string[10000];
+		hash[g] = new string[1000];
 	}
 	
 	vector<int> temp;
@@ -142,6 +142,9 @@ int main()
     				wackCheck = 1;
     			}
     		}
+    		if(wackCount == 1){
+    			checks.push_back(temp[i]);
+    		}
     		hash[temp[i]][wackCount] = files[j];
   		}
   		
@@ -150,12 +153,8 @@ int main()
     if(hash[2707][0].find(".txt") != string::npos){
     	cout << "FLAM" << endl;
     }
-    wackCount = 0;
-    while(hash[2707][wackCount].find(".txt") != string::npos){
-    	cout << hash[2707][wackCount] << endl;
-    	wackCount++;
-    }
     
-    
+    cout << checks.size() << endl;
+        
     return 0;
 }
