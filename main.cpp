@@ -66,6 +66,17 @@ string punctRemover(string word){
 
 }
 
+int Hashish(string chunk){
+    int sum = 0;
+
+    for(int i = 0, len = chunk.size(); i < len; i++){
+        sum += chunk[i];
+    }
+    
+    return sum;
+}
+
+
 int main()
 {
     string dir = string("sm_doc_set");
