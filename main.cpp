@@ -92,25 +92,31 @@ vector<int> segmenter(string fileName){
 			else{
 				chunk = punctRemover(chunk);
 				chunkHash = Hashish(chunk);
-				cout << chunk << endl;
-				cout << chunkHash << endl;
+				//cout << chunk << endl;
+				//cout << chunkHash << endl;
 				storage.push_back(chunkHash);
 			}
 			memeCount++;
 		}
-		cout << memeCount << endl;
+		//cout << memeCount << endl;
 		done = 1;
-		for(int i = 0; i < storage.size(); i++){
-			//cout << storage[i] << endl;
-		}
 	}
 	return storage;
 }
 
 int main()
 {
-	string hash[10000][10];
+	int wackCheck = 0;
+	int wackCount = 0;
+	
+	//string hash[10000][10];
+	string **hash = new string*[10000];
+	for(int g = 0; g < 10000; g++){
+		hash[g] = new string[10000];
+	}
+	
 	vector<int> temp;
+	vector<int> checks;
 
     string dir = string("sm_doc_set");
     vector<string> files = vector<string>();
@@ -121,10 +127,35 @@ int main()
         cout << files[i] << endl;
     }
     
-    temp = segmenter(files[0]);
-    for(int i = 0; i < temp.size(); i++){
-    	hash[temp[i]][0] = files[0];
+    for(int j = 0; j < files.size(); j++){
+   		temp = segmenter(files[j]);
+   		
+   		for(int i = 0; i < temp.size(); i++){
+    		wackCheck = 0;
+    		wackCount = 0;
+    
+    		while(wackCheck == 0){
+    			if(hash[temp[i]][wackCount].find(".txt") != string::npos && files[j].compare(hash[temp[i]][wackCount]) != 0){
+    				wackCount++;
+    			}
+    			else{
+    				wackCheck = 1;
+    			}
+    		}
+    		hash[temp[i]][wackCount] = files[j];
+  		}
+  		
     }
-    cout << hash[2707][0] << endl;
+    
+    if(hash[2707][0].find(".txt") != string::npos){
+    	cout << "FLAM" << endl;
+    }
+    wackCount = 0;
+    while(hash[2707][wackCount].find(".txt") != string::npos){
+    	cout << hash[2707][wackCount] << endl;
+    	wackCount++;
+    }
+    
+    
     return 0;
 }
