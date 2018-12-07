@@ -16,10 +16,15 @@ using namespace std;
 class collision {
 public:
 	collision();
+	collision(const collision & src);
 	collision(string name1, string name2, int num);
 	~collision();
 	
 	string printVals() const;
+	string getFile1() const;
+	string getFile2() const;
+	int getNum() const;
+	int repeat(vector<collision> list) const;
 	
 
 private:
@@ -33,6 +38,16 @@ private:
 
 collision::collision()
 {
+	fileName1 = "";
+	fileName2 = "";
+	numCollisions = 0;
+}
+
+collision::collision(const collision & src)
+{
+	fileName1 = src.fileName1;
+	fileName2 = src.fileName2;
+	numCollisions = src.numCollisions;
 }
 
 collision::collision(string name1, string name2, int num){
@@ -42,9 +57,6 @@ collision::collision(string name1, string name2, int num){
 }
 
 collision::~collision(){
-	delete &fileName1;
-	delete &fileName2;
-	delete &numCollisions;
 }
 
 string collision::printVals() const{
@@ -52,6 +64,28 @@ string collision::printVals() const{
 	string result = "Collisions: " + temp + " " + fileName1 + " " + fileName2 + "\n";
 	return result;
 }
+
+string collision::getFile1() const{
+	return fileName1;
+}
+string collision::getFile2() const{
+	return fileName2;
+}
+
+int collision::getNum() const{
+	return numCollisions;
+}
+
+int collision::repeat(vector<collision> list) const{
+	for(int i = 0; i < list.size(); i++){
+		if(fileName1 == list[i].getFile2() && fileName2 == list[i].getFile1()){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
 
 
 #endif
