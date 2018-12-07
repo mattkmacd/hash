@@ -155,6 +155,46 @@ int main()
     }
     
     cout << checks.size() << endl;
+	
+    string searchA, searchB;
+    int collisionCount;
+    int foundFile = 0;
+    vector <collision> printStructs; //vector w/ all nodes w/ collision greater than 200
+
+   for(int i = 0; i < files.size() - 1; i++){//get filename A
+        searchA = files[i];
+        for(int j = 1; j < files.size(); j++){//get filename B
+            searchB = files[j];
+            collisionCount = 0;
+
+            for(int q = 0; q < checks.size(); q++){//check hash entries for occurance of A and B
+                int hashIndex = checks[q];
+                int z = 0;
+
+                //check filenames w/ that hash key to see if A and B occur
+                while(z < 1000 && foundFile < 2){//while both files not found or more elements in second dim of hash table
+                    if(hash[hashIndex][z] == searchA || hash[hashIndex][z] == searchB){
+                        foundFile++;
+                    }
+                    z++;
+                }
+
+                if( foundFile == 2){ //if both fils found w/ that hash key, add to collision count
+                    collisionCount++;
+                }
+
+                foundFile = 0;
+            }
+
+            if(collisionCount > 200){
+                printStructs.push_back(collision(searchA,searchB,collisionCount));
+            }
+        }
+    }
+
+    for(int i = 0; i < printStructs.size(); i++){
+        cout << printStructs[i].printVals() << endl;
+    }
         
     return 0;
 }
