@@ -29,7 +29,8 @@ int getdir (string dir, vector<string> &files)
 }
 
 string punctRemover(string word){
-
+	//Removes punctuation and spaces from chunks, sets capitalized letters to lower case
+	//Prepares chunks to be put through the hash function
     for(int i = 0, len = word.size(); i < len; i++){
         if (ispunct(word[i])) {
             word.erase(i--, 1);
@@ -45,6 +46,7 @@ string punctRemover(string word){
 }
 
 int Hashish(string chunk){
+	//Sets the hash values to the ASCII sum of the chunks
     int sum = 0;
 
     for(int i = 0, len = chunk.size(); i < len; i++){
@@ -66,7 +68,9 @@ vector<int> segmenter(string fileName, string path, int inChunk){
 	int memeCount = 0;
 	int done = 0;
 	int chunkHash;
-	
+	//Runs through the files and finds each of the n word chunks
+	//Uses 2 files which iterate seperately to keep track of the first word and add the next n - 1 words to the chunk
+	//Returns vector of the hash values for a file
 	while(done == 0){
 		wordCount = 0;
 		//append = "../Hash/sm_doc_set/";
@@ -94,19 +98,17 @@ vector<int> segmenter(string fileName, string path, int inChunk){
 			else{
 				chunk = punctRemover(chunk);
 				chunkHash = Hashish(chunk);
-				//cout << chunk << endl;
-				//cout << chunkHash << endl;
 				storage.push_back(chunkHash);
 			}
 			memeCount++;
 		}
-		//cout << memeCount << endl;
 		done = 1;
 	}
 	return storage;
 }
 
 void sort(vector<collision> &list){
+	//Descending insertion sort
 	int i, j;
 	collision temp;
 	for(i = 0; i < list.size(); i++){
@@ -124,7 +126,6 @@ void sort(vector<collision> &list){
 
 int main(int argc, char *argv[])
 {
-	//string inPath;
 	int inChunk;
 	int inLimit;
 	
@@ -136,20 +137,20 @@ int main(int argc, char *argv[])
 	int wackCheck = 0;
 	int wackCount = 0;
 	
-	//string hash[10000][10];
+	//Sets up hash table
 	string **hash = new string*[10000];
 	for(int g = 0; g < 10000; g++){
 		hash[g] = new string[1000];
 	}
 	
-	vector<int> temp;
-	vector<int> checks;
+	vector<int> temp; //Temporarily stores hash values of each file
+	vector<int> checks; //Stores all hash values with 2+ collisions
 
-    string dir = string("sm_doc_set");
+    string dir = string(inPath);
     vector<string> files = vector<string>();
 
     getdir(dir,files);
-    
+    //Associates file strings with hash values on the hash tables
     for(int j = 0; j < files.size(); j++){
    		temp = segmenter(files[j], inPath, inChunk);
    		
@@ -204,7 +205,7 @@ int main(int argc, char *argv[])
 
                 foundFile = 0;
             }
-
+			//If the number of collisions is more than the limit, it is added to the printStructs vector
             if(collisionCount > inLimit){
             	tempCol = collision(searchA, searchB, collisionCount);
             	if(tempCol.repeat(printStructs) == 0){
@@ -213,6 +214,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+    //Sorts the collisions in descending order
 	sort(printStructs);
     for(int i = 0; i < printStructs.size(); i++){
         cout << printStructs[i].printVals() << endl;
