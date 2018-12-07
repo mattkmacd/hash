@@ -7,6 +7,7 @@
 #include <fstream>
 #include <bits/stdc++.h>
 #include <cctype>
+#include "collision.h"
 
 using namespace std;
 
@@ -49,12 +50,12 @@ int Hashish(string chunk){
     for(int i = 0, len = chunk.size(); i < len; i++){
         sum += chunk[i];
     }
-    
+      
     return sum;
 }
 
 
-vector<int> segmenter(string fileName){
+vector<int> segmenter(string fileName, string path, int inChunk){
 	vector<int> storage;
 
 	fstream file1;
@@ -68,7 +69,8 @@ vector<int> segmenter(string fileName){
 	
 	while(done == 0){
 		wordCount = 0;
-		append = "../Hash/sm_doc_set/";
+		//append = "../Hash/sm_doc_set/";
+		append = path;
 		append = append + fileName.c_str();
 		
 		file1.open(append);
@@ -82,11 +84,11 @@ vector<int> segmenter(string fileName){
 				wordCount++;
 			}
 			wordCount = 0;
-			while(file2 >> word2 && wordCount < 5){
+			while(file2 >> word2 && wordCount < inChunk - 1){
 				chunk = chunk + word2;
 				wordCount++;
 			}
-			if(wordCount != 5){
+			if(wordCount != inChunk - 1){
 				done = 1;
 			}
 			else{
@@ -104,8 +106,33 @@ vector<int> segmenter(string fileName){
 	return storage;
 }
 
-int main()
+void sort(vector<collision> &list){
+	int i, j;
+	collision temp;
+	for(i = 0; i < list.size(); i++){
+		temp = list[i];
+		j = i;
+		while(j > 0 && list[j - 1].getNum() < temp.getNum()){
+			list[j] = list[j - 1];
+			j = j - 1;
+			list[j] = temp;
+		}
+		
+	}
+
+}
+
+int main(int argc, char *argv[])
 {
+	//string inPath;
+	int inChunk;
+	int inLimit;
+	
+	std::string inPath = argv[1];
+	inChunk = atoi(argv[2]);
+	inLimit = atoi(argv[3]);
+
+
 	int wackCheck = 0;
 	int wackCount = 0;
 	
@@ -122,13 +149,9 @@ int main()
     vector<string> files = vector<string>();
 
     getdir(dir,files);
-
-    for (unsigned int i = 0;i < files.size();i++) {
-        cout << files[i] << endl;
-    }
     
     for(int j = 0; j < files.size(); j++){
-   		temp = segmenter(files[j]);
+   		temp = segmenter(files[j], inPath, inChunk);
    		
    		for(int i = 0; i < temp.size(); i++){
     		wackCheck = 0;
@@ -149,20 +172,15 @@ int main()
   		}
   		
     }
-    
-    if(hash[2707][0].find(".txt") != string::npos){
-    	cout << "FLAM" << endl;
-    }
-    
-    cout << checks.size() << endl;
 	
     string searchA, searchB;
     int collisionCount;
     int foundFile = 0;
+    collision tempCol;
     vector <collision> printStructs; //vector w/ all nodes w/ collision greater than 200
 
-   for(int i = 0; i < files.size() - 1; i++){//get filename A
-        searchA = files[i];
+	for(int i = 0; i < files.size() - 1; i++){//get filename A
+    	searchA = files[i];
         for(int j = 1; j < files.size(); j++){//get filename B
             searchB = files[j];
             collisionCount = 0;
@@ -172,7 +190,8 @@ int main()
                 int z = 0;
 
                 //check filenames w/ that hash key to see if A and B occur
-                while(z < 1000 && foundFile < 2){//while both files not found or more elements in second dim of hash table
+                //while(z < 1000 && foundFile < 2){//while both files not found or more elements in second dim of hash table
+                while(hash[hashIndex][z].find(".txt") != string::npos){
                     if(hash[hashIndex][z] == searchA || hash[hashIndex][z] == searchB){
                         foundFile++;
                     }
@@ -186,15 +205,18 @@ int main()
                 foundFile = 0;
             }
 
-            if(collisionCount > 200){
-                printStructs.push_back(collision(searchA,searchB,collisionCount));
+            if(collisionCount > inLimit){
+            	tempCol = collision(searchA, searchB, collisionCount);
+            	if(tempCol.repeat(printStructs) == 0){
+               		printStructs.push_back(tempCol);
+               	}
             }
         }
     }
-
+	sort(printStructs);
     for(int i = 0; i < printStructs.size(); i++){
         cout << printStructs[i].printVals() << endl;
     }
-        
+    
     return 0;
 }
